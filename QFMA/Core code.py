@@ -73,7 +73,7 @@ def create_heat_mask(infrared_image, n_clusters=3):
     cluster_centers = kmeans.cluster_centers_.flatten()
     cluster_centers.sort()
     threshold = cluster_centers[-1]
-    print(f"自动确定的阈值: {threshold}")
+   
     heat_mask = (infrared_image > threshold).astype(np.uint8)
     return heat_mask
 
@@ -100,7 +100,7 @@ def image_to_overlapping_patches(img, patch_size=16, stride=1, mask=None):
                 gid += 1 
 
     if len(node_feats) == 0:
-        raise RuntimeError("未找到patch，mask过小请检查！")
+        raise RuntimeError("patch，mask small！")
 
     node_feats = torch.stack(node_feats)
     print(f"Node Features Shape: {node_feats.shape}")
@@ -287,7 +287,7 @@ def gnn_patch_attack_with_attention(img, target_img, structural_gnn, device, att
     return adv_img
 
 def load_image(image_path, img_size, device):![](v1.jpg)
-    """加载图像并转换为PyTorch的张量格式"""
+    
     image = cv2.imread(image_path)  
     image = cv2.resize(image, (img_size, img_size))  
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  
@@ -311,7 +311,7 @@ class ImageFusion:
         return fftpack.idct(fftpack.idct(dct_img, axis=0, norm='ortho'), axis=1, norm='ortho')
 
     def generate_fusion_image(self, visible_image, infrared_image, perturbation_weights=None):
-        print("开始生成融合图像...")
+        print("fusing image...")
 
 
         visible_np = cv2.cvtColor(visible_image, cv2.COLOR_BGR2RGB).astype(np.float32)
@@ -350,7 +350,7 @@ class ImageFusion:
         perturbation_image = np.clip(fusion_image_low + perturbation_weights, 0, 255).astype(np.uint8)
         final_fusion_image = np.clip(final_fusion_image + (perturbation_image - fusion_image_low), 0, 255)
 
-        print(f"最终融合图像 - Min: {final_fusion_image.min()}, Max: {final_fusion_image.max()}")
+        print(f"fused - Min: {final_fusion_image.min()}, Max: {final_fusion_image.max()}")
 
         if len(final_fusion_image.shape) == 2:  
             final_fusion_image = np.stack([final_fusion_image] * 3, axis=2)
